@@ -1,14 +1,12 @@
 **Диаграмма классов (Class Diagram)**
+classDiagram
+    class Cell {
+        -bool mined
+        -bool open
+        -bool flagged
+        -int around
+    }
 
-    classDiagram
-        class Cell {
-            -bool mined
-            -bool open
-            -bool flagged
-            -int around
-            +Cell()
-        }
-    
     class Game {
         -int W
         -int H
@@ -38,32 +36,14 @@
         -sf::Text status
         -sf::RectangleShape restartBtn
         -sf::Text restartText
-        -int CELL_SIZE
-        -int OFFSET
         
         +main() int
         -chooseDifficulty(sf::RenderWindow& window) int
-        -drawGame(sf::RenderWindow& window) void
-        -handleEvents(sf::Event& event) void
     }
 
-    class SFML_System {
-        <<External>>
-        +RenderWindow
-        +Font
-        +Text
-        +RectangleShape
-        +Color
-        +Event
-        +Mouse
-    }
-
-    Game "1" --> "*" Cell : contains
-    MinesweeperApp "1" --> "1" Game : controls
-    MinesweeperApp --> SFML_System : uses
-    Game --> SFML_System : (indirect)
-
-
+    Game "1" -- "*" Cell : содержит
+    MinesweeperApp "1" -- "1" Game : управляет
+    
 **Диаграмма последовательности - Основной цикл**
 sequenceDiagram
     participant User
