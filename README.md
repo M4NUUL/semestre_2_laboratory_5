@@ -1,4 +1,5 @@
 **Диаграмма классов (Class Diagram)**
+
 classDiagram
     class Cell {
         -bool mined
