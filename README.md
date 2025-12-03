@@ -1,4 +1,4 @@
-**Диаграмма классов (Class Diagram)**
+
 classDiagram
     class Cell {
         -bool mined
@@ -43,68 +43,3 @@ classDiagram
 
     Game "1" -- "*" Cell : содержит
     MinesweeperApp "1" -- "1" Game : управляет
-    
-**Диаграмма последовательности - Основной цикл**
-sequenceDiagram
-    participant User
-    participant App as MinesweeperApp
-    participant Game
-    participant CellGrid
-    participant SFML
-
-    User->>App: Запуск программы
-    App->>SFML: Инициализация окна
-    App->>SFML: Загрузка шрифта
-    
-    alt Выбор сложности
-        App->>SFML: Показ меню выбора
-        User->>App: Выбор уровня
-        App->>Game: Создание игры(W, H, MINES)
-        Game->>CellGrid: Инициализация поля
-    end
-    
-    loop Основной игровой цикл
-        User->>SFML: Взаимодействие с мышью
-        SFML->>App: Обработка событий
-        
-        alt Клик по кнопке рестарта
-            App->>Game: resetField()
-            Game->>CellGrid: Сброс всех ячеек
-        else Клик по игровому полю
-            App->>Game: openCell(x, y)
-            Game->>CellGrid: Получить ячейку
-            CellGrid->>Game: Информация о ячейке
-            
-            alt Первый клик
-                Game->>Game: generateMines(x, y)
-                Game->>CellGrid: Расставить мины
-                Game->>CellGrid: Вычислить around
-            end
-            
-            alt Ячейка с миной
-                Game->>Game: triggerExplosion(x, y)
-                Game->>CellGrid: Открыть все ячейки
-                Game->>App: gameOver = true
-            else Ячейка пустая
-                alt around == 0
-                    Game->>Game: floodFill(x, y)
-                    loop Рекурсивное открытие
-                        Game->>CellGrid: Открыть соседей
-                    end
-                end
-                Game->>Game: checkWin()
-                alt Все безопасные открыты
-                    Game->>App: win = true
-                end
-            end
-        end
-        
-        App->>Game: Получить состояние поля
-        Game->>App: Данные ячеек
-        App->>SFML: Отрисовка интерфейса
-        App->>SFML: Отрисовка игрового поля
-        SFML->>User: Отображение обновленного состояния
-    end
-    
-    User->>App: Закрытие окна
-    App->>SFML: Закрытие окна
