@@ -1,15 +1,14 @@
 **Диаграмма классов (Class Diagram)**
 
-classDiagram
-    class Cell {
-        -bool mined
-        -bool open
-        -bool flagged
-        -int around
-        
-        +Cell()
-    }
-
+    classDiagram
+        class Cell {
+            -bool mined
+            -bool open
+            -bool flagged
+            -int around
+            +Cell()
+        }
+    
     class Game {
         -int W
         -int H
