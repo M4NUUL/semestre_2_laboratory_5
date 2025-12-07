@@ -1,7 +1,13 @@
+```plantuml
 @startuml
 skinparam backgroundColor #ffffff
 skinparam classAttributeIconSize 0
+skinparam classBorderColor #333333
+skinparam classFontColor #111111
 
+'===========================
+' КЛАСС GAME
+'===========================
 class Game {
   -int W
   -int H
@@ -15,16 +21,25 @@ class Game {
   -float timeElapsed
   -vector<vector<Cell>> field
 
-  +resetField()
-  +revealFromState(x, y)
-  +toggleFlagFromState(x, y)
-  +generateMines(safeX, safeY)
-  +countMines(x, y)
-  +floodFill(x, y)
-  +triggerExplosion(x, y)
-  +checkWin()
+  +resetField() : void
+  +revealFromState(int x, int y) : void
+  +toggleFlagFromState(int x, int y) : void
+  +generateMines(int safeX, int safeY) : void
+  +countMines(int x, int y) : int
+  +floodFill(int x, int y) : void
+  +triggerExplosion(int x, int y) : void
+  +checkWin() : void
+  +startTimerIfNeeded() : void
+  +updateTimer(float dt) : void
+  +stopTimer() : void
+  +makeClosedState() : ICellState*
+  +makeOpenedState() : ICellState*
+  +makeFlaggedState() : ICellState*
 }
 
+'===========================
+' КЛАСС CELL
+'===========================
 class Cell {
   -bool mined
   -int around
@@ -33,9 +48,12 @@ class Cell {
 
 Game "1" --> "W*H" Cell : содержит
 
+'===========================
+' ПАТТЕРН STATE
+'===========================
 interface ICellState {
-  +onLeftClick(Game, x, y)
-  +onRightClick(Game, x, y)
+  +onLeftClick(Game, int, int)
+  +onRightClick(Game, int, int)
   +isOpen() : bool
   +isFlagged() : bool
 }
@@ -50,17 +68,24 @@ ICellState <|-- FlaggedState
 
 Cell --> ICellState : хранит состояние
 
+'===========================
+' UI / SFML
+'===========================
 class UI {
   -sf::RenderWindow window
   -sf::Font font
   -Game game
+  -sf::Text status
+  -int XOFFSET
+  -int OFFSET
 
   +chooseDifficulty()
-  +handleMouse()
   +render()
+  +handleMouse()
 }
 
-UI --> Game : вызывает методы игры
-UI --> "SFML" : использует графику/ввод
+UI --> Game : управляет логикой
+UI --> "SFML" : графика/ввод
 
 @enduml
+```
