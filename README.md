@@ -1,68 +1,66 @@
-classDiagram
-    class Cell {
-        -bool mined
-        -bool open
-        -bool flagged
-        -int around
-        +Cell()
-    }
+@startuml
+skinparam backgroundColor #ffffff
+skinparam classAttributeIconSize 0
 
-    class Game {
-        -int W
-        -int H
-        -int MINES
-        -bool gameOver
-        -bool win
-        -bool firstClick
-        -bool explosion
-        -float explosionTimer
-        -vector~vector~Cell~~ field
-        
-        +Game(int w, int h, int mines)
-        +resetField() void
-        +generateMines(int safeX, int safeY) void
-        +countMines(int x, int y) int
-        +openCell(int x, int y) void
-        +floodFill(int x, int y) void
-        +toggleFlag(int x, int y) void
-        +triggerExplosion(int x, int y) void
-        +checkWin() void
-    }
+class Game {
+  -int W
+  -int H
+  -int MINES
+  -bool gameOver
+  -bool win
+  -bool firstClick
+  -bool explosion
+  -float explosionTimer
+  -bool timerRunning
+  -float timeElapsed
+  -vector<vector<Cell>> field
 
-    class MinesweeperApp {
-        -sf::RenderWindow window
-        -sf::Font font
-        -Game game
-        -sf::Text status
-        -sf::RectangleShape restartBtn
-        -sf::Text restartText
-        -int cellSize
-        -int offsetY
-        
-        +main() int
-        -chooseDifficulty(sf::RenderWindow& window) int
-        -handleMouseClick(sf::Event::MouseButtonEvent mouse) void
-        -renderGame() void
-        -updateStatus() void
-    }
+  +resetField()
+  +revealFromState(x, y)
+  +toggleFlagFromState(x, y)
+  +generateMines(safeX, safeY)
+  +countMines(x, y)
+  +floodFill(x, y)
+  +triggerExplosion(x, y)
+  +checkWin()
+}
 
-    class SFML_Window {
-        <<External>>
-        +sf::RenderWindow
-        +sf::Event
-        +sf::Mouse
-    }
+class Cell {
+  -bool mined
+  -int around
+  -ICellState state
+}
 
-    class SFML_Graphics {
-        <<External>>
-        +sf::Font
-        +sf::Text
-        +sf::RectangleShape
-        +sf::Color
-    }
+Game "1" --> "W*H" Cell : содержит
 
-    Game "1" --> "*" Cell : содержит
-    MinesweeperApp "1" --> "1" Game : управляет
-    MinesweeperApp --> SFML_Window : использует
-    MinesweeperApp --> SFML_Graphics : использует
-    Game --> MinesweeperApp : уведомляет о событиях
+interface ICellState {
+  +onLeftClick(Game, x, y)
+  +onRightClick(Game, x, y)
+  +isOpen() : bool
+  +isFlagged() : bool
+}
+
+class ClosedState
+class OpenedState
+class FlaggedState
+
+ICellState <|-- ClosedState
+ICellState <|-- OpenedState
+ICellState <|-- FlaggedState
+
+Cell --> ICellState : хранит состояние
+
+class UI {
+  -sf::RenderWindow window
+  -sf::Font font
+  -Game game
+
+  +chooseDifficulty()
+  +handleMouse()
+  +render()
+}
+
+UI --> Game : вызывает методы игры
+UI --> "SFML" : использует графику/ввод
+
+@enduml
